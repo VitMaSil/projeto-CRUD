@@ -42,7 +42,7 @@ $total_registros = $result_total->fetch_assoc()['total'];
 $total_paginas = max(1, ceil($total_registros / $limite));
 
 // Consulta com os campos extras
-$sql = "SELECT id, nome, sobrenome, data_nascimento, telefone, email FROM usuarios $filtro ORDER BY $coluna $direcao LIMIT $limite OFFSET $offset";
+$sql = "SELECT id, nome, sobrenome, telefone, email, data_nascimento, cpf FROM usuarios $filtro ORDER BY $coluna $direcao LIMIT $limite OFFSET $offset";
 $result = $conn->query($sql);
 ?>
 
@@ -54,6 +54,7 @@ $result = $conn->query($sql);
   <title>Lista de Registros</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  
 </head>
 <body>
 <div class="container mt-5">
@@ -100,38 +101,45 @@ $result = $conn->query($sql);
             return "<a href=\"$url\" class=\"text-white text-decoration-none\">$label <i class=\"$icone\"></i></a>";
           }
           ?>
-          <th><?= ordenarLink('id', 'ID', $coluna, $direcao, $busca, $pagina) ?></th>
-          <th><?= ordenarLink('nome', 'Nome', $coluna, $direcao, $busca, $pagina) ?></th>
-          <th><?= ordenarLink('sobrenome', 'Sobrenome', $coluna, $direcao, $busca, $pagina) ?></th>
+          <th><?php echo ordenarLink('id', 'ID', $coluna, $direcao, $busca, $pagina); ?></th>
+          <th><?php echo ordenarLink('nome', 'Nome', $coluna, $direcao, $busca, $pagina); ?></th>
+          <th><?php echo ordenarLink('sobrenome', 'Sobrenome', $coluna, $direcao, $busca, $pagina); ?></th>
           <th>Ações</th>
+          <th>Mais Infos</th>
+
+
         </tr>
       </thead>
       <tbody>
         <?php while ($row = $result->fetch_assoc()): ?>
-          <tr>
-            <td><?= $row['id'] ?></td>
-            <td><?= htmlspecialchars($row['nome']) ?></td>
-            <td><?= htmlspecialchars($row['sobrenome']) ?></td>
-            <td>
-              <a href="editar_nome.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-warning me-1">
-                <i class="bi bi-pencil-square"></i> Editar
-              </a>
-              <a href="excluir.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-danger me-1" onclick="return confirm('Tem certeza?');">
-                <i class="bi bi-trash"></i> Excluir
-              </a>
-              <button class="btn btn-sm btn-info" data-bs-toggle="collapse" data-bs-target="#info<?= $row['id'] ?>">
-                <i class="bi bi-chevron-down"></i> Mais Informações
-              </button>
-            </td>
-          </tr>
-          <tr class="collapse" id="info<?= $row['id'] ?>">
-            <td colspan="4" class="bg-light">
-              <strong>Data de nascimento:</strong> <?= htmlspecialchars($row['data_nascimento'] ?: 'Não informado') ?><br>
-              <strong>Telefone:</strong> <?= htmlspecialchars($row['telefone'] ?: 'Não informado') ?><br>
-              <strong>Email:</strong> <?= htmlspecialchars($row['email'] ?: 'Não informado') ?>
-            </td>
-          </tr>
-        <?php endwhile; ?>
+  <tr>
+    <td><?php echo $row['id']; ?></td>
+    <td><?php echo $row['nome']; ?></td>
+    <td><?php echo $row['sobrenome']; ?></td>
+    <td>
+      <a href="editar_nome.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-warning me-2" data-bs-toggle="tooltip" title="Editar este registro">
+        <i class="bi bi-pencil-square"></i> Editar
+      </a>
+      <a href="excluir.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title="Excluir este registro" onclick="return confirm('Tem certeza que deseja excluir?');">
+        <i class="bi bi-trash"></i> Excluir
+      </a>
+    </td>
+    <td class="text-center">
+      <button class="btn btn-sm btn-info toggle-details" data-bs-toggle="tooltip" title="Mais informações" data-target="#detalhes-<?php echo $row['id']; ?>">
+        <i class="bi bi-chevron-down"></i>
+      </button>
+    </td>
+  </tr>
+  <tr class="table-secondary collapse" id="detalhes-<?php echo $row['id']; ?>">
+    <td colspan="5">
+      <strong>Telefone:</strong> <?php echo htmlspecialchars($row['telefone'] ?? '—'); ?><br>
+      <strong>Email:</strong> <?php echo htmlspecialchars($row['email'] ?? '—'); ?><br>
+      <strong>Data de Nascimento:</strong> <?php echo htmlspecialchars($row['data_nascimento'] ?? '—'); ?><br>
+      <strong>CPF:</strong> <?php echo htmlspecialchars($row['cpf'] ?? '—'); ?>
+    </td>
+  </tr>
+<?php endwhile; ?>
+
       </tbody>
     </table>
 
@@ -154,5 +162,21 @@ $result = $conn->query($sql);
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.querySelectorAll('.toggle-details').forEach(button => {
+    button.addEventListener('click', () => {
+      const targetId = button.getAttribute('data-target');
+      const detailsRow = document.querySelector(targetId);
+      if (detailsRow.classList.contains('show')) {
+        detailsRow.classList.remove('show');
+        button.querySelector('i').classList.replace('bi-chevron-up', 'bi-chevron-down');
+      } else {
+        detailsRow.classList.add('show');
+        button.querySelector('i').classList.replace('bi-chevron-down', 'bi-chevron-up');
+      }
+    });
+  });
+</script>
+
 </body>
 </html>
