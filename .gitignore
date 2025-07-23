@@ -1,0 +1,9 @@
+/vendor/
+node_modules/
+*.log
+.env
+.DS_Store
+*.bak
+*.tmp
+# Ignorar arquivos do sistema
+Thumbs.db

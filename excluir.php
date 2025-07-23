@@ -1,4 +1,13 @@
 <?php
+session_start();
+if (!isset($_SESSION['usuario_id'])) {
+  header('Location: login.php');
+  exit;
+}
+?>
+
+
+<?php
 // Configuração do banco de dados
 $host = "localhost";
 $usuario = "root";

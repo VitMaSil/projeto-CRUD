@@ -1,3 +1,12 @@
+<?php
+session_start();
+if (!isset($_SESSION['usuario_id'])) {
+  header('Location: login.php');
+  exit;
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -15,11 +24,11 @@
     <form action="processa_formulario.php" method="POST">
       <div class="mb-3">
         <label for="nome" class="form-label">Nome</label>
-        <input type="text" class="form-control" name="nome" id="nome" placeholder="Digite seu nome">
+        <input type="text" class="form-control" name="nome" id="nome" placeholder="Digite seu nome" required maxlength="50">
       </div>
       <div class="mb-3">
         <label for="sobrenome" class="form-label">Sobrenome</label>
-        <input type="text" class="form-control" name="sobrenome" id="sobrenome" placeholder="Digite seu sobrenome">
+        <input type="text" class="form-control" name="sobrenome" id="sobrenome" placeholder="Digite seu sobrenome" required maxlength="50">
       </div>
       <button type="submit" class="btn btn-primary">Enviar</button>
     </form>

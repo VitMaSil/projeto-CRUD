@@ -1,25 +1,26 @@
 <?php
-// Conexão com MySQL usando MySQLi
+session_start();
+if (!isset($_SESSION['usuario_id'])) {
+  header('Location: login.php');
+  exit;
+}
+
 $host = 'localhost';
 $user = 'root';
 $pass = '';
-$db   = 'crud';
+$db = 'crud';
 
 $conn = new mysqli($host, $user, $pass, $db);
-
-// Verifica conexão
 if ($conn->connect_error) {
   die("Falha na conexão: " . $conn->connect_error);
 }
 
-// Verifica se o ID foi passado
 $id = $_GET['id'] ?? null;
 if (!$id) {
   die("ID do usuário não informado.");
 }
 
-// Prepara a consulta e busca os dados
-$id = intval($id); // segurança básica
+$id = intval($id);
 $sql = "SELECT * FROM usuarios WHERE id = $id";
 $result = $conn->query($sql);
 
@@ -40,26 +41,42 @@ $conn->close();
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-  <div class="container mt-5">
-    <h2 class="mb-4">Editar Usuário</h2>
+<div class="container mt-5">
+  <h2 class="mb-4">Editar Usuário</h2>
+  <form action="atualiza_usuario.php" method="POST">
+    <input type="hidden" name="id" value="<?= htmlspecialchars($usuario['id']) ?>">
 
-    <form action="atualiza_usuario.php" method="POST">
-      <input type="hidden" name="id" value="<?= htmlspecialchars($usuario['id']) ?>">
+    <div class="mb-3">
+      <label for="nome" class="form-label">Nome</label>
+      <input type="text" class="form-control" name="nome" id="nome" value="<?= htmlspecialchars($usuario['nome']) ?>" required>
+    </div>
 
-      <div class="mb-3">
-        <label for="nome" class="form-label">Nome</label>
-        <input type="text" class="form-control" name="nome" id="nome" value="<?= htmlspecialchars($usuario['nome']) ?>" required>
-      </div>
+    <div class="mb-3">
+      <label for="sobrenome" class="form-label">Sobrenome</label>
+      <input type="text" class="form-control" name="sobrenome" id="sobrenome" value="<?= htmlspecialchars($usuario['sobrenome']) ?>" required>
+    </div>
 
-      <div class="mb-3">
-        <label for="sobrenome" class="form-label">Sobrenome</label>
-        <input type="text" class="form-control" name="sobrenome" id="sobrenome" value="<?= htmlspecialchars($usuario['sobrenome']) ?>" required>
-      </div>
+    <div class="mb-3">
+      <label for="data_nascimento" class="form-label">Data de Nascimento</label>
+      <input type="date" class="form-control" name="data_nascimento" id="data_nascimento"
+             value="<?= htmlspecialchars($usuario['data_nascimento']) ?>">
+    </div>
 
-      <button type="submit" class="btn btn-success">Salvar Alterações</button>
-    </form>
-  </div>
+    <div class="mb-3">
+      <label for="telefone" class="form-label">Telefone</label>
+      <input type="text" class="form-control" name="telefone" id="telefone"
+             value="<?= htmlspecialchars($usuario['telefone'] ?? '') ?>"
+>
+    </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input type="email" class="form-control" name="email" id="email"
+             value="<?= htmlspecialchars($usuario['email'] ?? '') ?>">
+    </div>
+
+    <button type="submit" class="btn btn-success">Salvar Alterações</button>
+  </form>
+</div>
 </body>
 </html>
