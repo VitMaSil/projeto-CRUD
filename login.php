@@ -1,8 +1,10 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 session_start();
 
-if (isset($_SESSION['usuario_id'])) {
-  header('Location: index.php'); // já logado, vai direto para CRUD
+if (isset($_SESSION['usuario'])) {
+  header('Location: home.php');
   exit;
 }
 
@@ -13,13 +15,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $senha = $_POST['senha'] ?? '';
 
   if ($username && $senha) {
-    // Conectar DB
     $conn = new mysqli('localhost', 'root', '', 'crud');
     if ($conn->connect_error) {
       die('Erro no banco: ' . $conn->connect_error);
     }
 
-    $stmt = $conn->prepare("SELECT id, password FROM usuarios_login WHERE username = ?");
+    $stmt = $conn->prepare("SELECT id, password, tipo FROM usuarios_login WHERE username = ?");
     $stmt->bind_param('s', $username);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -28,11 +29,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $user = $result->fetch_assoc();
 
       if (password_verify($senha, $user['password'])) {
-        // Login OK, cria sessão
-        $_SESSION['usuario_id'] = $user['id'];
-        $_SESSION['username'] = $username;
-
-        header('Location: index.php');
+        $_SESSION['usuario'] = $username;
+        $_SESSION['usuario_id'] = $user['id'];      // <-- Linha adicionada aqui
+        $_SESSION['tipo'] = $user['tipo'];
+        header('Location: home.php');
         exit;
       } else {
         $erro = 'Senha incorreta.';
@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <h2 class="mb-4 text-center">Login</h2>
 
     <?php if ($erro): ?>
-      <div class="alert alert-danger"><?php echo htmlspecialchars($erro); ?></div>
+      <div class="alert alert-danger"><?= htmlspecialchars($erro) ?></div>
     <?php endif; ?>
 
     <form method="POST" action="">

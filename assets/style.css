@@ -1,0 +1,11 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+}
+
+section {
+  transition: all 0.4s ease-in-out;
+}
+
+section:hover {
+  transform: scale(1.01);
+}

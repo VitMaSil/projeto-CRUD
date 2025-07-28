@@ -1,5 +1,4 @@
-<?php
-session_start();
+<?php include 'navbar.php'; 
 
 // Configuração do banco de dados
 $host = "localhost";
@@ -59,18 +58,6 @@ $result = $conn->query($sql);
 <body>
 <div class="container mt-5">
   <h2 class="mb-4">Lista de Registros</h2>
-
-  <?php if (isset($_SESSION['username'])): ?>
-    <div class="mb-3 text-end">
-      <span class="me-3">Olá, <?= htmlspecialchars($_SESSION['username']) ?></span>
-      <a href="logout.php" class="btn btn-outline-danger btn-sm">Sair</a>
-    </div>
-  <?php else: ?>
-    <div class="mb-3 text-end">
-      <a href="login.php" class="btn btn-primary btn-sm me-2">Login</a>
-      <a href="criar_conta.php" class="btn btn-success btn-sm">Criar nova conta</a>
-    </div>
-  <?php endif; ?>
 
   <a href="inserir_nome.php" class="btn btn-success mb-3">
     <i class="bi bi-plus-lg"></i> Novo Registro
@@ -178,10 +165,7 @@ $result = $conn->query($sql);
   });
 </script>
 
-<?php
-header('Location: home.php');
-exit;
-?>
-
 </body>
 </html>
+
+?>
