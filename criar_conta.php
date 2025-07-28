@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </form>
 
     <div class="mt-3 text-center">
-      <a href="index.php" class="btn btn-secondary">Voltar à tela inicial</a>
+      <a href="home.php" class="btn btn-secondary">Voltar à tela inicial</a>
     </div>
 
     <p class="mt-3 text-center">
